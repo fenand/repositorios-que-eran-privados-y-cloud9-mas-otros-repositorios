@@ -1,0 +1,247 @@
+﻿import java.util.*;
+/**
+ * Write a description of class Puerto here.
+ * 
+ * @author (your name) 
+ * @version (a version number or a date)
+ */
+public class Puerto
+{
+    private ArrayList<Alquiler> alquileres;
+    public static final int NUMERO_AMARRES = 4;
+    /**
+     * Constructor for objects of class Puerto
+     */
+    public Puerto()
+    {
+        alquileres = new ArrayList<Alquiler>();
+    }
+
+    /**
+     * Metodo que añade un alquiler al Array devuelve la posicion o -1 en caso de que ya estuviese lleno
+     */
+    public int addAlquiler(int numeroDias, Cliente cliente, Barco barco){
+        int count = 0;
+        int pos = 0;
+        Alquiler compAlquiler = new Alquiler(0, null, null, -1);
+        ArrayList<Alquiler> alquileresTemp = new ArrayList<Alquiler>();
+        if(alquileres.size() != 4){
+            //             int cont = 0;
+            while(count < alquileres.size()){
+                compAlquiler = alquileres.get(count);
+                if(compAlquiler.getAmarre() != count){
+                    alquileresTemp.add(compAlquiler);
+                    alquileres.remove(count);
+                }
+                else{
+                    //                     cont++;
+                    count++;
+                    pos = count;
+                }
+            }
+            alquileres.add(new Alquiler(numeroDias, cliente, barco, pos));
+            for(Alquiler alquiler: alquileresTemp){
+                alquileres.add(alquiler);
+            }
+        }
+        else{
+            pos = -1;
+        }
+        //         while(count < NUMERO_AMARRES && pos == -1){
+        //             if(alquileres[count]== null){
+        //                 pos = count;
+        //                 alquileres[count] = new Alquiler(numeroDias, cliente, barco);
+        //             }
+        //             count++;
+        //         }
+        return pos;
+    }
+
+    /**
+     * Metodo imprime los amarres que estan alquilados y los que aun estan vacios
+     */
+    public void verEstadoAmarres(){
+        String info = "";
+        if (alquileres.size() > 0){
+            int count = 0;
+            int cont = 0;
+            while (count < NUMERO_AMARRES){
+                if (cont < alquileres.size() && alquileres.get(cont).getAmarre() == count){
+                    System.out.println("Amarre " + (count) 
+                        + " esta ocupado, el valor de su alquiler en este momento es = " 
+                        + alquileres.get(cont).getCosteAlquiler());
+                        
+                    count++;
+                    cont++;
+                }
+                else{
+                    System.out.println("Amarre " + (count) + " esta vacio");
+                    count++;
+                }
+            }
+            //             for(int count = 0; count < NUMERO_AMARRES;count++){                
+            //                 if(count < alquileres.size() && alquileres.get(count).getAmarre() == count){
+            // 
+            //                     System.out.println("Amarre " + (count) 
+            //                         + " esta ocupado, el valor de su alquiler en este momento es = " 
+            //                         + alquileres.get(count).getCosteAlquiler());  
+            // 
+            //                 }
+            //                 else if(count < alquileres.size()){
+            //                     int cantAmarresVacios = alquileres.get(count).getAmarre();
+            //                     int cont = count;
+            //                     while (count < cantAmarresVacios){
+            //                         System.out.println("Amarre " + (count) + " esta vacio");
+            //                         count++;
+            //                     }
+            //                     for(int cont = count; cont < NUMERO_AMARRES;count++){
+            //                         System.out.println("Amarre " + (cont) + " esta vacio");
+            //                     }
+            //                     System.out.println("Amarre " + (count) 
+            //                         + " esta ocupado, el valor de su alquiler en este momento es = " 
+            //                         + alquileres.get(cont).getCosteAlquiler()); 
+            //                 }
+            //                 else{
+            //                     System.out.println("Amarre " + (count) + " esta vacio");
+            //                 }
+            //             }
+        }
+        else{
+            for(int count = 0; count < NUMERO_AMARRES;count++){
+                System.out.println("Amarre " + (count) + " esta vacio");
+            }
+        }
+    }
+
+    /**
+     * Metodo que liquida un alquiler y devuelve su coste
+     */
+    public float liquidarAlquiler(int posicion){       
+        int count = 0;
+        boolean encontrado = false;
+        float liquid = 0;
+        while(count < alquileres.size() && !encontrado){
+            Alquiler compAlquiler = alquileres.get(count);
+            if (compAlquiler.getAmarre() == posicion){
+                liquid = compAlquiler.getCosteAlquiler();
+                alquileres.remove(count);
+            }
+            count++;
+        }
+        return liquid;
+    }
+}
+
+
+
+
+
+
+
+##################################################################################
+                                     TESTS
+##################################################################################
+
+
+
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The test class PuertoTest.
+ *
+ * @author  (your name)
+ * @version (a version number or a date)
+ */
+public class PuertoTest
+{
+    /**
+     * Default constructor for test class PuertoTest
+     */
+    public PuertoTest()
+    {
+    }
+
+    /**
+     * Sets up the test fixture.
+     *
+     * Called before every test case method.
+     */
+    @Before
+    public void setUp()
+    {
+    }
+
+    /**
+     * Tears down the test fixture.
+     *
+     * Called after every test case method.
+     */
+    @After
+    public void tearDown()
+    {
+    }
+
+    @Test
+    public void addAlquiler001()
+    {
+        Puerto puerto1 = new Puerto();
+        Cliente cliente1 = new Cliente("Dani", "Kraken");
+        Velero velero1 = new Velero(2, "Kraken", 4, 6854);
+        assertEquals(0, puerto1.addAlquiler(1, cliente1, velero1));
+        assertEquals(1, puerto1.addAlquiler(2, cliente1, velero1));
+        assertEquals(2, puerto1.addAlquiler(3, cliente1, velero1));
+        assertEquals(680, puerto1.liquidarAlquiler(1), 0.1);
+        assertEquals(1, puerto1.addAlquiler(2, cliente1, velero1));
+        assertEquals(720, puerto1.liquidarAlquiler(2), 0.1);
+        assertEquals(2, puerto1.addAlquiler(3, cliente1, velero1));
+        assertEquals(640, puerto1.liquidarAlquiler(0), 0.1);
+        assertEquals(0, puerto1.addAlquiler(1, cliente1, velero1));
+    }
+    
+    @Test
+    public void addAlquiler002()
+    {
+        Puerto puerto1 = new Puerto();
+        Cliente cliente1 = new Cliente("Dani", "Kraken");
+        Velero velero1 = new Velero(2, "Kraken", 4, 6854);
+        System.out.println("Comprobamos que el puerto esta vacio:");
+        puerto1.verEstadoAmarres();
+        assertEquals(0, puerto1.addAlquiler(1, cliente1, velero1));
+        assertEquals(1, puerto1.addAlquiler(2, cliente1, velero1));
+        assertEquals(2, puerto1.addAlquiler(3, cliente1, velero1));
+        assertEquals(3, puerto1.addAlquiler(4, cliente1, velero1));
+        System.out.println("Añadimos 3 barcos:");
+        puerto1.verEstadoAmarres();
+        assertEquals(680, puerto1.liquidarAlquiler(1), 0.1);
+        System.out.println("Eliminamos el Barco del amarre 1:");
+        puerto1.verEstadoAmarres();
+        assertEquals(1, puerto1.addAlquiler(2, cliente1, velero1));
+        System.out.println("1)Añadimos 1 barco:");
+        puerto1.verEstadoAmarres();
+        assertEquals(720, puerto1.liquidarAlquiler(2), 0.1);
+        System.out.println("Eliminamos el Barco del amarre 2:");
+        puerto1.verEstadoAmarres();
+        assertEquals(2, puerto1.addAlquiler(3, cliente1, velero1));
+        System.out.println("2)Añadimos 1 barco:");
+        puerto1.verEstadoAmarres();
+        assertEquals(640, puerto1.liquidarAlquiler(0), 0.1);
+        System.out.println("Eliminamos el Barco del amarre 0:");
+        puerto1.verEstadoAmarres();
+        assertEquals(0, puerto1.addAlquiler(1, cliente1, velero1));
+        System.out.println("3)Añadimos 1 barco:");
+        puerto1.verEstadoAmarres();
+        assertEquals(760, puerto1.liquidarAlquiler(3), 0.1);
+        System.out.println("Eliminamos el Barco del amarre 3:");
+        puerto1.verEstadoAmarres();
+        assertEquals(3, puerto1.addAlquiler(1, cliente1, velero1));
+        System.out.println("4)Añadimos 1 barco:");
+        puerto1.verEstadoAmarres();
+    }
+
+}
+
+
+
